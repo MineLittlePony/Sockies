@@ -6,8 +6,8 @@
   "description": "Be fabulous! Daaaaling!",
   "authors": [ "Sollace" ],
   "contact": {
-    "sources": "https://github.com/Sollace/Sockies",
-    "issues": "https://github.com/Sollace/Sockies/issues"
+    "sources": "https://github.com/MineLittlePony/Sockies",
+    "issues": "https://github.com/MineLittlePony/Sockies/issues"
   },
   "mixins": [
     "sockies.mixin.json"
@@ -45,7 +45,7 @@
     "modmenu": {
       "links": {
         "modmenu.discord": "https://discord.gg/zKSZ8Mg",
-        "modmenu.github_releases": "https://github.com/Sollace/Sockies/releases",
+        "modmenu.github_releases": "https://github.com/MineLittlePony/Sockies/releases",
         "modmenu.modrinth": "https://modrinth.com/mod/sockies"
       },
       "update_checker": true
