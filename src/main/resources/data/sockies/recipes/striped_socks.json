@@ -1,0 +1,17 @@
+{
+  "type": "sockies:crafting_shaped",
+  "group": "socks",
+  "key": {
+    "#": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "# #",
+    "# #"
+  ],
+  "result": {
+    "count": 1,
+    "item": "sockies:striped_socks"
+  }
+}

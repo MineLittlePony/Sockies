@@ -1,0 +1,9 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "sockies:item/plain_socks",
+        "layer1": "sockies:item/stripes",
+        "layer2": "sockies:item/stripes_2",
+        "layer3": "sockies:item/stripes_3"
+    }
+}

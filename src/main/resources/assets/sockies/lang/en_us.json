@@ -1,0 +1,15 @@
+{
+  "mod.sockies.name": "Sockies",
+  "item.sockies.socks": "Socks",
+  "item.sockies.long_socks": "Long Socks",
+  "item.sockies.fuzzy_socks": "Fuzzy Socks",
+  "item.sockies.plain_socks": "Plain Socks",
+  "item.sockies.striped_socks": "Striped Socks",
+  "item.sockies.polkadot_socks": "Polkadot Socks",
+  "item.sockies.rainbow_socks": "Rainbow Socks",
+
+  "item.sockies.pattern.plain": "Pattern: Plain",
+  "item.sockies.pattern.striped": "Pattern: Striped",
+  "item.sockies.pattern.dots": "Pattern: Polkadot",
+  "item.sockies.pattern.rainbows": "Pattern: Rainbow"
+}

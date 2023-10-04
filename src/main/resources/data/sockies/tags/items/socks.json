@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "sockies:plain_socks",
+    "sockies:striped_socks",
+    "sockies:polkadot_socks",
+    "sockies:rainbow_socks"
+  ]
+}
