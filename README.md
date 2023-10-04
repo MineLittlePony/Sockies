@@ -8,6 +8,17 @@
 
 Brings a whole lot of cute and fuzzy foot accessories to Minecraft!
 
+### Recipes
+
+They're basically wool boots. Combine different colours of wool to change the sock's appearance. More colours gives more complex patterns:
+
+- 1 colour = plain socks
+- 2 colours = striped socks
+- 3 colours = polkadot socks
+- 4 colours = rainbow socks
+
+More sock types and trinkets support coming soon!
+
 ### Building
 
 `git clone https://github.com/MineLittlePony/Sockies`
