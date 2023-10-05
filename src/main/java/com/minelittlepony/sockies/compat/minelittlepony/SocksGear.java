@@ -9,8 +9,8 @@ import com.minelittlepony.api.model.gear.IGear;
 import com.minelittlepony.client.model.IPonyModel;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.armour.PonyArmourModel;
-import com.minelittlepony.sockies.STags;
 import com.minelittlepony.sockies.client.SocksFeature;
+import com.minelittlepony.sockies.compat.trinkets.Trinkets;
 import com.minelittlepony.sockies.item.SocksItem;
 
 import net.minecraft.client.MinecraftClient;
@@ -31,7 +31,7 @@ public class SocksGear implements IGear {
 
     @Override
     public boolean canRender(IModel model, Entity entity) {
-        return entity instanceof LivingEntity living && living.getEquippedStack(EquipmentSlot.FEET).isIn(STags.SOCKS);
+        return entity instanceof LivingEntity living && Trinkets.getSocks(living).findFirst().isPresent();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SocksGear implements IGear {
 
     @Override
     public <T extends Entity> Identifier getTexture(T entity, Context<T, ?> context) {
-        return SocksFeature.getTexture((SocksItem)socks.getItem(), ((SocksItem)socks.getItem()).getPattern(), 1);
+        return SocksFeature.getTexture((SocksItem)socks.getItem(), ((SocksItem)socks.getItem()).getPattern(), 0);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class SocksGear implements IGear {
         if (model instanceof IPonyModel<?> lmodel) {
             this.model.poseModel((LivingEntity)entity, swing, move, 0, 0, 0, EquipmentSlot.FEET, ArmourLayer.OUTER, (IPonyModel<LivingEntity>)lmodel);
         }
-        socks = ((LivingEntity)entity).getEquippedStack(EquipmentSlot.FEET);
+        socks = Trinkets.getSocks((LivingEntity)entity).findFirst().orElse(ItemStack.EMPTY);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class SocksItem extends Item implements DyeableItem, Equipment {
     private final SockPattern pattern;
 
     public SocksItem(SockMaterial material, SockPattern pattern, Settings settings) {
-        super(settings);
+        super(settings.maxCount(1));
         this.material = material;
         this.pattern = pattern;
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);

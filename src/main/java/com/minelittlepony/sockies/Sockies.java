@@ -3,6 +3,8 @@ package com.minelittlepony.sockies;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.minelittlepony.sockies.compat.trinkets.Trinkets;
+
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 
@@ -17,5 +19,6 @@ public class Sockies implements ModInitializer {
     @Override
     public void onInitialize() {
         SItems.bootstrap();
+        Trinkets.bootstrap();
     }
 }

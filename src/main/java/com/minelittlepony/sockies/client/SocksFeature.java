@@ -1,6 +1,7 @@
 package com.minelittlepony.sockies.client;
 
 import com.minelittlepony.sockies.STags;
+import com.minelittlepony.sockies.compat.trinkets.Trinkets;
 import com.minelittlepony.sockies.item.SockPattern;
 import com.minelittlepony.sockies.item.SocksItem;
 
@@ -11,7 +12,6 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -28,7 +28,7 @@ public class SocksFeature<T extends LivingEntity, A extends BipedEntityModel<T>>
 
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-        ItemStack socks = entity.getEquippedStack(EquipmentSlot.FEET);
+        ItemStack socks = Trinkets.getSocks(entity).findFirst().orElse(ItemStack.EMPTY);
 
         if (socks.getItem() instanceof SocksItem socksItem && socks.isIn(STags.SOCKS)) {
             context.getModel().copyBipedStateTo(model);
