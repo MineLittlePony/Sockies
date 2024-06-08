@@ -3,6 +3,7 @@ package com.minelittlepony.sockies;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.minelittlepony.sockies.item.SockColorsComponent;
 import com.minelittlepony.sockies.item.SockMaterial;
 import com.minelittlepony.sockies.item.SockPattern;
 import com.minelittlepony.sockies.item.SocksItem;
@@ -17,7 +18,9 @@ public interface SItems {
     SocksItem PLAIN_SOCKS = register("plain_socks", new SocksItem(SockMaterial.WOOL, SockPattern.PLAIN, new Item.Settings()));
     SocksItem STRIPED_SOCKS = register("striped_socks", new SocksItem(SockMaterial.WOOL, SockPattern.STRIPES, new Item.Settings()));
     SocksItem POLKADOT_SOCKS = register("polkadot_socks", new SocksItem(SockMaterial.WOOL, SockPattern.DOTS, new Item.Settings()));
-    SocksItem RAINBOW_SOCKS = register("rainbow_socks", new SocksItem(SockMaterial.WOOL, SockPattern.RAINBOWS, new Item.Settings()));
+    SocksItem RAINBOW_SOCKS = register("rainbow_socks", new SocksItem(SockMaterial.WOOL, SockPattern.RAINBOWS, new Item.Settings()
+            .component(SItemComponents.SOCK_COLORS, new SockColorsComponent(SockPattern.RAINBOW_DEFAULT, false))
+    ));
 
     private static <T extends Item> T register(String name, T item) {
         if (item instanceof SocksItem socks) {
@@ -27,6 +30,7 @@ public interface SItems {
     }
 
     static void bootstrap() {
+        SItemComponents.bootstrap();
         SItemGroups.bootstrap();
         SRecipes.bootstrap();
     }

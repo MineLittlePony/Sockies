@@ -2,6 +2,7 @@ package com.minelittlepony.sockies.client;
 
 import com.minelittlepony.sockies.STags;
 import com.minelittlepony.sockies.compat.trinkets.Trinkets;
+import com.minelittlepony.sockies.item.SockColorsComponent;
 import com.minelittlepony.sockies.item.SockPattern;
 import com.minelittlepony.sockies.item.SocksItem;
 
@@ -14,8 +15,8 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
 
 public class SocksFeature<T extends LivingEntity, A extends BipedEntityModel<T>> implements AccessoryFeatureRenderer.Feature<T, A> {
     private final FeatureRendererContext<T, ? extends BipedEntityModel<T>> context;
@@ -30,7 +31,7 @@ public class SocksFeature<T extends LivingEntity, A extends BipedEntityModel<T>>
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         ItemStack socks = Trinkets.getSocks(entity).findFirst().orElse(ItemStack.EMPTY);
 
-        if (socks.getItem() instanceof SocksItem socksItem && socks.isIn(STags.SOCKS)) {
+        if (socks.getItem() instanceof SocksItem && socks.isIn(STags.SOCKS)) {
             context.getModel().copyBipedStateTo(model);
             model.setVisible(false);
             model.leftLeg.visible = true;
@@ -42,16 +43,12 @@ public class SocksFeature<T extends LivingEntity, A extends BipedEntityModel<T>>
     public static void renderSocks(ItemStack socks, BipedEntityModel<?> model, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         if (socks.getItem() instanceof SocksItem socksItem && socks.isIn(STags.SOCKS)) {
             SockPattern pattern = socksItem.getPattern();
+            int[] colors = SockColorsComponent.getColors(socks);
 
             for (int i = 0; i < pattern.layers(); i++) {
                 VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getArmorCutoutNoCull(getTexture(socksItem, pattern, i)));
-                int color = socksItem.getColor(socks, i);
-                model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV,
-                        ColorHelper.Argb.getRed(color) / 255F,
-                        ColorHelper.Argb.getGreen(color) / 255F,
-                        ColorHelper.Argb.getBlue(color) / 255F,
-                        1
-                );
+                int color = i < colors.length ? colors[i] : Colors.WHITE;
+                model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, color);
             }
         }
     }

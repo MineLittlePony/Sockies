@@ -2,7 +2,6 @@ package com.minelittlepony.sockies.compat.trinkets;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Multimap;
@@ -12,6 +11,7 @@ import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.Trinket;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
+import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -20,10 +20,11 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Equipment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 class SockTrinket implements Trinket {
-    private static final Identifier SHOES_SLOT = new Identifier("feet:shoes");
+    private static final Identifier SHOES_SLOT = Identifier.of("feet", "shoes");
 
     public static void bootstrap() {
         SItems.ALL_SOCKS.forEach(sock -> {
@@ -64,7 +65,7 @@ class SockTrinket implements Trinket {
         }
 
         if (stack.getItem() instanceof Equipment q) {
-            entity.playSound(q.getEquipSound(), 1, 1);
+            entity.playSound(q.getEquipSound().value(), 1, 1);
         }
     }
 
@@ -75,13 +76,13 @@ class SockTrinket implements Trinket {
 
     @Override
     public boolean canUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
-        return !(EnchantmentHelper.hasBindingCurse(stack) && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(entity));
+        return !(EnchantmentHelper.hasAnyEnchantmentsWith(stack, EnchantmentEffectComponentTypes.PREVENT_ARMOR_CHANGE) && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(entity));
     }
 
     @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getModifiers(ItemStack stack, SlotReference slot, LivingEntity entity, UUID uuid) {
-        Multimap<EntityAttribute, EntityAttributeModifier> modifiers = Trinket.super.getModifiers(stack, slot, entity, uuid);
-        item.getAttributeModifiers(item.getSlotType());
+    public Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> getModifiers(ItemStack stack, SlotReference slot, LivingEntity entity, Identifier slotIdentifier) {
+        Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> modifiers = Trinket.super.getModifiers(stack, slot, entity, slotIdentifier);
+        item.getAttributeModifiers().applyModifiers(item.getSlotType(), modifiers::put);
         return modifiers;
     }
 }

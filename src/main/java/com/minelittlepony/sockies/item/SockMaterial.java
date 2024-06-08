@@ -1,81 +1,42 @@
 package com.minelittlepony.sockies.item;
 
-import java.util.function.Supplier;
-
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
+import java.util.List;
+import java.util.Map;
 import com.minelittlepony.sockies.Sockies;
 
-import net.minecraft.item.ArmorItem.Type;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
-public class SockMaterial implements ArmorMaterial {
+public class SockMaterial  {
     private static final Ingredient REPAIR_INGREDIENT = Ingredient.fromTag(ItemTags.WOOL);
 
-    public static final SockMaterial WOOL = new SockMaterial(Sockies.id("wool"), ImmutableMultimap::of);
+    public static final SockMaterial WOOL = new SockMaterial(Sockies.id("wool"), new ArmorMaterial(
+            Map.of(),
+            0,
+            RegistryEntry.of(SoundEvents.BLOCK_WOOL_PLACE),
+            () -> REPAIR_INGREDIENT,
+            List.of(),
+            0,
+            0
+    ));
 
     private final Identifier id;
+    private final ArmorMaterial material;
 
-    private final Supplier<Multimap<EntityAttribute, EntityAttributeModifier>> modifiers;
-
-    public SockMaterial(Identifier id, Supplier<Multimap<EntityAttribute, EntityAttributeModifier>> modifiers) {
+    public SockMaterial(Identifier id, ArmorMaterial material) {
         this.id = id;
-        this.modifiers = Suppliers.memoize(modifiers::get)::get;
+        this.material = material;
     }
 
-    @Override
-    public int getDurability(Type var1) {
-        return 0;
-    }
-
-    @Override
-    public int getProtection(Type var1) {
-        return 0;
-    }
-
-    @Override
-    public int getEnchantability() {
-        return 0;
-    }
-
-    @Override
-    public SoundEvent getEquipSound() {
-        return SoundEvents.BLOCK_WOOL_PLACE;
-    }
-
-    @Override
-    public Ingredient getRepairIngredient() {
-        return REPAIR_INGREDIENT;
-    }
-
-    @Override
-    public String getName() {
-        return id.toString();
+    public ArmorMaterial getMaterial() {
+        return material;
     }
 
     public Identifier getId() {
         return id;
-    }
-
-    @Override
-    public float getToughness() {
-        return 0;
-    }
-
-    @Override
-    public float getKnockbackResistance() {
-        return 0;
-    }
-
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers() {
-        return modifiers.get();
     }
 }

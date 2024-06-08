@@ -1,39 +1,54 @@
 package com.minelittlepony.sockies.item;
 
 import java.util.List;
+import java.util.function.Supplier;
 
-import org.jetbrains.annotations.Nullable;
-
-import com.google.common.collect.Multimap;
-
+import com.google.common.base.Suppliers;
 import net.minecraft.block.DispenserBlock;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.DyeableItem;
 import net.minecraft.item.Equipment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class SocksItem extends Item implements DyeableItem, Equipment {
+public class SocksItem extends Item implements Equipment {
     private final SockMaterial material;
     private final SockPattern pattern;
+
+    private final Supplier<AttributeModifiersComponent> attributeModifiers;
 
     public SocksItem(SockMaterial material, SockPattern pattern, Settings settings) {
         super(settings.maxCount(1));
         this.material = material;
         this.pattern = pattern;
         DispenserBlock.registerBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);
+        this.attributeModifiers = Suppliers.memoize(() -> {
+            var mat = material.getMaterial();
+            AttributeModifierSlot slot = AttributeModifierSlot.forEquipmentSlot(ArmorItem.Type.LEGGINGS.getEquipmentSlot());
+            Identifier id = Identifier.ofVanilla("armor." + ArmorItem.Type.LEGGINGS.getName());
+
+            AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder()
+                    .add(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier(id, mat.getProtection(ArmorItem.Type.LEGGINGS), EntityAttributeModifier.Operation.ADD_VALUE), slot)
+                    .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, new EntityAttributeModifier(id, mat.toughness(), EntityAttributeModifier.Operation.ADD_VALUE), slot);
+            float knockbackResistance = mat.knockbackResistance();
+            if (knockbackResistance > 0) {
+                builder.add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, new EntityAttributeModifier(id, knockbackResistance, EntityAttributeModifier.Operation.ADD_VALUE), slot);
+            }
+            return builder.build();
+        });
     }
 
     public SockMaterial getMaterial() {
@@ -42,7 +57,7 @@ public class SocksItem extends Item implements DyeableItem, Equipment {
 
     @Override
     public int getEnchantability() {
-        return material.getEnchantability();
+        return material.getMaterial().enchantability();
     }
 
     @Override
@@ -51,13 +66,13 @@ public class SocksItem extends Item implements DyeableItem, Equipment {
     }
 
     @Override
-    public SoundEvent getEquipSound() {
-        return material.getEquipSound();
+    public RegistryEntry<SoundEvent> getEquipSound() {
+        return material.getMaterial().equipSound();
     }
 
     @Override
     public boolean canRepair(ItemStack stack, ItemStack ingredient) {
-        return material.getRepairIngredient().test(ingredient) || super.canRepair(stack, ingredient);
+        return material.getMaterial().repairIngredient().get().test(ingredient) || super.canRepair(stack, ingredient);
     }
 
     @Override
@@ -66,55 +81,13 @@ public class SocksItem extends Item implements DyeableItem, Equipment {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
         tooltip.add(Text.translatable("item.sockies.pattern." + getPattern().name()));
     }
 
     @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return slot == getSlotType() ? material.getAttributeModifiers() : super.getAttributeModifiers(slot);
-    }
-
-    static String getDisplayKey(int layer) {
-        return layer == 0 ? DISPLAY_KEY : DISPLAY_KEY + "_" + layer;
-    }
-
-    public boolean hasColor(ItemStack stack, int layer) {
-        NbtCompound nbtCompound = stack.getSubNbt(getDisplayKey(layer));
-        return nbtCompound != null && nbtCompound.contains(COLOR_KEY, NbtElement.NUMBER_TYPE);
-    }
-
-    public ItemStack setColors(ItemStack stack, int[] colors) {
-        for (int i = 0; i < colors.length && i < getPattern().layers(); i++) {
-            setColor(stack, i, colors[i]);
-        }
-        return stack;
-    }
-
-    public void setColor(ItemStack stack, int layer, int color) {
-        stack.getOrCreateSubNbt(getDisplayKey(layer)).putInt(COLOR_KEY, color);
-    }
-
-    public int getColor(ItemStack stack, int layer) {
-        NbtCompound nbtCompound = stack.getSubNbt(getDisplayKey(layer));
-        if (nbtCompound != null && nbtCompound.contains(COLOR_KEY, NbtElement.NUMBER_TYPE)) {
-            return nbtCompound.getInt(COLOR_KEY);
-        }
-        return 0xFFFFFF;
-    }
-
-    @Override
-    public void removeColor(ItemStack stack) {
-        for (int i = 0; i < getPattern().layers(); i++) {
-            removeColor(stack, i);
-        }
-    }
-
-    public void removeColor(ItemStack stack, int layer) {
-        NbtCompound nbtCompound = stack.getSubNbt(getDisplayKey(layer));
-        if (nbtCompound != null && nbtCompound.contains(COLOR_KEY)) {
-            nbtCompound.remove(COLOR_KEY);
-        }
+    public AttributeModifiersComponent getAttributeModifiers() {
+        return attributeModifiers.get();
     }
 
     public SockPattern getPattern() {

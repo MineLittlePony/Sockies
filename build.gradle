@@ -4,8 +4,8 @@ buildscript {
     }
 }
 plugins {
-    id 'java-library'
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'maven-publish'
     id 'com.modrinth.minotaur' version '2.+'
     id 'org.ajoberstar.reckon' version '0.13.0'
 }
@@ -54,9 +54,6 @@ dependencies {
 
     modApi "com.minelittlepony:minelittlepony:${project.minelp_version}"
     modApi "dev.emi:trinkets:${project.trinkets_version}"
-
-    modApi "com.jamieswhiteshirt:reach-entity-attributes:${project.reach_attributes_version}"
-    include "com.jamieswhiteshirt:reach-entity-attributes:${project.reach_attributes_version}"
 
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
